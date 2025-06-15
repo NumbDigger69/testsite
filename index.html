@@ -169,7 +169,7 @@
       id="driver-form"
       novalidate
       enctype="multipart/form-data"
-      onsubmit="return sendEmail(event)"
+      onsubmit="sendEmail(event)"
     >
       <div>
         <label for="primary-driver"
@@ -406,8 +406,7 @@
     </form>
   </div>
   <script>
-    // Replace with your Google Apps Script Web App URL
-    const googleSheetURL = 'https://script.google.com/macros/s/AKfycbwi55Y0fu7-80I1ImMlV1lcKjSNEptWgRSBdC7HrgNMkeRxaxai0e7sgrvHXwpmWYLvJQ/exec';
+    const googleSheetURL = 'https://script.google.com/macros/s/AKfycbwi55Y0fu7-80I1ImMlV1lcKjSNEptWgRSBdC7HrgNMkeRxaxai0e7sgrvHXwpmWYLvJQ/exec'; // Update with your actual script ID
 
     const form = document.getElementById('driver-form');
     const submitMessage = document.getElementById('submit-message');
@@ -415,7 +414,7 @@
     async function sendEmail(event) {
       event.preventDefault();
 
-      // Basic validation for required fields
+      // Basic validation
       if (!form.email.value.trim()) {
         alert('Please enter your email.');
         return false;
@@ -435,71 +434,59 @@
 
       submitMessage.style.display = 'none';
 
-      // Collect form data into an object
-      const data = {
-        primaryDriver: 'Primary Driver',
-        firstName: form.firstName.value.trim(),
-        lastName: form.lastName.value.trim(),
-        email: form.email.value.trim(),
-        phone: form.phone.value.trim(),
-        dlNumber: form.dlNumber.value.trim(),
-        dlState: form.dlState.value,
-        maritalStatus: form.maritalStatus.value,
-        vin: form.vin.value.trim(),
-        householdDrivers: form.householdDrivers.value.trim(),
-        address1: form.address1.value.trim(),
-        address2: form.address2.value.trim(),
-        city: form.city.value.trim(),
-        state: form.state.value,
-        zip: form.zip.value.trim(),
-        country: form.country.value
-      };
+      const formData = new FormData(form);
 
       try {
-        // POST data to Google Apps Script Web App
         const response = await fetch(googleSheetURL, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(data)
+          body: formData
         });
 
-        if (!response.ok) {
-          throw new Error('Failed to submit to Google Sheets');
+        if (response.ok) {
+          form.reset();
+          submitMessage.style.display = 'block';
+        } else {
+          alert('Form submission failed. Please try again.');
         }
-
-        // Show confirmation message and reset form
-        submitMessage.style.display = 'block';
-        form.reset();
-
-        return true; // allow form submission if needed
       } catch (error) {
-        alert('There was an error submitting the form: ' + error.message);
-        return false;
+        alert('There was an error submitting the form.');
+        console.error('Error:', error);
       }
     }
 
-    // Drag-and-drop file upload functionality
-    function setupDropzone(dropzoneId, inputId) {
-      const dropzone = document.getElementById(dropzoneId);
-      const input = document.getElementById(inputId);
+    // Drag and drop for DL upload
+    const dlDropzone = document.getElementById('dl-dropzone');
+    const dlUpload = document.getElementById('dl-upload');
+    dlDropzone.addEventListener('click', () => dlUpload.click());
+    dlDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      dlDropzone.classList.add('dragover');
+    });
+    dlDropzone.addEventListener('dragleave', () => dlDropzone.classList.remove('dragover'));
+    dlDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      dlDropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        dlUpload.files = e.dataTransfer.files;
+      }
+    });
 
-      dropzone.addEventListener('click', () => input.click());
-      dropzone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropzone.classList.add('dragover');
-      });
-      dropzone.addEventListener('dragleave', () => {
-        dropzone.classList.remove('dragover');
-      });
-      dropzone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropzone.classList.remove('dragover');
-        input.files = e.dataTransfer.files;
-      });
-    }
-
-    setupDropzone('dl-dropzone', 'dl-upload');
-    setupDropzone('doc-dropzone', 'doc-upload');
+    // Drag and drop for doc upload
+    const docDropzone = document.getElementById('doc-dropzone');
+    const docUpload = document.getElementById('doc-upload');
+    docDropzone.addEventListener('click', () => docUpload.click());
+    docDropzone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      docDropzone.classList.add('dragover');
+    });
+    docDropzone.addEventListener('dragleave', () => docDropzone.classList.remove('dragover'));
+    docDropzone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      docDropzone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        docUpload.files = e.dataTransfer.files;
+      }
+    });
   </script>
 </body>
 </html>
