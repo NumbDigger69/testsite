@@ -144,24 +144,54 @@
       user-select: none;
       transition: background-color 0.2s ease;
       box-sizing: border-box;
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
     }
     
     .upload-dropzone p {
-        font-size: 1rem;
-        margin:0;
+      font-size: 1rem;
+      margin: 0;
     }
     
     .upload-dropzone .drop-icon {
-        font-size: 2.5rem;
-        line-height: 1;
+      font-size: 2.5rem;
+      line-height: 1;
     }
 
     .upload-dropzone.dragover {
       background-color: #e5e7eb;
+      border-color: #22c55e;
     }
 
     .hidden-input {
       display: none;
+    }
+    
+    .file-info {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: #374151;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .file-info .file-name {
+      font-weight: 600;
+    }
+    
+    .remove-file {
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      text-decoration: underline;
     }
 
     @media (max-width: 640px) {
@@ -194,12 +224,14 @@
       </div>
       <div class="flex-row">
         <div class="flex-1">
-          <label for="first-name">First Name</label>
+          <label for="first-name">First Name <span class="text-red">*</span></label>
           <input id="first-name" name="firstName" type="text" required />
+          <div id="first-name-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter your first name</div>
         </div>
         <div class="flex-1">
-          <label for="last-name">Last Name</label>
+          <label for="last-name">Last Name <span class="text-red">*</span></label>
           <input id="last-name" name="lastName" type="text" required />
+          <div id="last-name-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter your last name</div>
         </div>
       </div>
       <div>
@@ -207,12 +239,14 @@
           >Email <span class="text-red">*</span></label
         >
         <input id="email" name="email" type="email" required />
+        <div id="email-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter a valid email address</div>
       </div>
       <div>
         <label for="phone"
           >Phone Number <span class="text-red">*</span></label
         >
-        <input id="phone" name="phone" type="tel" required />
+        <input id="phone" name="phone" type="tel" required placeholder="(123) 456-7890" />
+        <div id="phone-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter a valid phone number</div>
       </div>
       <div>
         <label for="dl-number">Driver's License #</label>
@@ -326,7 +360,7 @@
   
   <script>
     // ⬇️ *** REPLACE WITH YOUR GOOGLE APPS SCRIPT WEB APP URL *** ⬇️
-    const googleSheetURL = 'https://script.google.com/macros/s/AKfycbyoc3pcqSVNoHWrX9kZmYMLAR-wXlFgBaaqb7TRUR_0VL2eTJphGWxm3Wv0vDK-fCDwOA/exec';
+    const googleSheetURL = 'AKfycbyoc3pcqSVNoHWrX9kZmYMLAR-wXlFgBaaqb7TRUR_0VL2eTJphGWxm3Wv0vDK-fCDwOA';
 
     const form = document.getElementById('driver-form');
     const submitButton = document.getElementById('submit-button');
