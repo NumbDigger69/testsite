@@ -2,7 +2,7 @@
 <head>
   <meta charset="utf-8" />
   <meta content="width=device-width, initial-scale=1" name="viewport" />
-  <title>Form Page</title>
+  <title>Driver Information Form</title>
   <link href="https://fonts.googleapis.com/css2?family=Merriweather&display=swap" rel="stylesheet" />
   <style>
     body,
@@ -40,6 +40,7 @@
       padding: 1.5rem 2rem 2rem 2rem;
       border-radius: 0.375rem;
       box-sizing: border-box;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     }
 
     label {
@@ -58,13 +59,13 @@
       width: 100%;
       padding: 0.75rem 1rem;
       font-size: 1.125rem;
-      border: 1px solid #6b7280;
+      border: 1px solid #d1d5db;
       border-radius: 0.5rem;
       box-sizing: border-box;
       color: #000;
       margin-bottom: 1.25rem;
       resize: vertical;
-      transition: border-color 0.2s ease;
+      transition: all 0.2s ease;
     }
 
     input[type='text']:focus,
@@ -125,33 +126,78 @@
     .btn-submit:hover {
       background-color: #16a34a;
     }
+    
+    .btn-submit:disabled {
+      background-color: #9ca3af;
+      cursor: not-allowed;
+    }
 
     .upload-dropzone {
       width: 100%;
       border: 2px dashed #4b5563;
       border-radius: 0.5rem;
-      padding: 3rem 0;
+      padding: 2rem 1rem;
       text-align: center;
       color: #4b5563;
-      font-size: 3rem;
       cursor: pointer;
       margin-bottom: 1.5rem;
       user-select: none;
       transition: background-color 0.2s ease;
       box-sizing: border-box;
+      position: relative;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .upload-dropzone p {
+      font-size: 1rem;
+      margin: 0;
+    }
+    
+    .upload-dropzone .drop-icon {
+      font-size: 2.5rem;
+      line-height: 1;
     }
 
     .upload-dropzone.dragover {
       background-color: #e5e7eb;
+      border-color: #22c55e;
     }
 
     .hidden-input {
       display: none;
     }
+    
+    .file-info {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: #374151;
+      max-width: 90%;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    
+    .file-info .file-name {
+      font-weight: 600;
+    }
+    
+    .remove-file {
+      color: #dc2626;
+      cursor: pointer;
+      font-size: 0.8rem;
+      margin-top: 0.3rem;
+      text-decoration: underline;
+    }
 
     @media (max-width: 640px) {
       .flex-row {
         flex-direction: column;
+        gap: 0;
       }
     }
   </style>
@@ -169,7 +215,7 @@
       id="driver-form"
       novalidate
       enctype="multipart/form-data"
-      onsubmit="sendEmail(event)"
+      onsubmit="return sendEmail(event)"
     >
       <div>
         <label for="primary-driver"
@@ -178,12 +224,14 @@
       </div>
       <div class="flex-row">
         <div class="flex-1">
-          <label for="first-name">First Name</label>
+          <label for="first-name">First Name <span class="text-red">*</span></label>
           <input id="first-name" name="firstName" type="text" required />
+          <div id="first-name-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter your first name</div>
         </div>
         <div class="flex-1">
-          <label for="last-name">Last Name</label>
+          <label for="last-name">Last Name <span class="text-red">*</span></label>
           <input id="last-name" name="lastName" type="text" required />
+          <div id="last-name-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter your last name</div>
         </div>
       </div>
       <div>
@@ -191,12 +239,14 @@
           >Email <span class="text-red">*</span></label
         >
         <input id="email" name="email" type="email" required />
+        <div id="email-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter a valid email address</div>
       </div>
       <div>
         <label for="phone"
           >Phone Number <span class="text-red">*</span></label
         >
-        <input id="phone" name="phone" type="tel" required />
+        <input id="phone" name="phone" type="tel" required placeholder="(123) 456-7890" />
+        <div id="phone-error" class="error-message" style="color:#dc2626; font-size:0.875rem; display:none;">Please enter a valid phone number</div>
       </div>
       <div>
         <label for="dl-number">Driver's License #</label>
@@ -205,57 +255,8 @@
       <div>
         <label for="dl-state">Driver's License State</label>
         <select id="dl-state" name="dlState">
-          <option disabled selected>Select an option</option>
-          <option value="AL">AL</option>
-          <option value="AK">AK</option>
-          <option value="AZ">AZ</option>
-          <option value="AR">AR</option>
-          <option value="CA">CA</option>
-          <option value="CO">CO</option>
-          <option value="CT">CT</option>
-          <option value="DE">DE</option>
-          <option value="FL">FL</option>
-          <option value="GA">GA</option>
-          <option value="HI">HI</option>
-          <option value="ID">ID</option>
-          <option value="IL">IL</option>
-          <option value="IN">IN</option>
-          <option value="IA">IA</option>
-          <option value="KS">KS</option>
-          <option value="KY">KY</option>
-          <option value="LA">LA</option>
-          <option value="ME">ME</option>
-          <option value="MD">MD</option>
-          <option value="MA">MA</option>
-          <option value="MI">MI</option>
-          <option value="MN">MN</option>
-          <option value="MS">MS</option>
-          <option value="MO">MO</option>
-          <option value="MT">MT</option>
-          <option value="NE">NE</option>
-          <option value="NV">NV</option>
-          <option value="NH">NH</option>
-          <option value="NJ">NJ</option>
-          <option value="NM">NM</option>
-          <option value="NY">NY</option>
-          <option value="NC">NC</option>
-          <option value="ND">ND</option>
-          <option value="OH">OH</option>
-          <option value="OK">OK</option>
-          <option value="OR">OR</option>
-          <option value="PA">PA</option>
-          <option value="RI">RI</option>
-          <option value="SC">SC</option>
-          <option value="SD">SD</option>
-          <option value="TN">TN</option>
-          <option value="TX">TX</option>
-          <option value="UT">UT</option>
-          <option value="VT">VT</option>
-          <option value="VA">VA</option>
-          <option value="WA">WA</option>
-          <option value="WV">WV</option>
-          <option value="WI">WI</option>
-          <option value="WY">WY</option>
+          <option disabled selected value="">Select an option</option>
+          <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option><option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option><option value="CT">CT</option><option value="DE">DE</option><option value="FL">FL</option><option value="GA">GA</option><option value="HI">HI</option><option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option><option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option><option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option><option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option><option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option><option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option><option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option><option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option><option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option><option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option><option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option><option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option><option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
         </select>
       </div>
 
@@ -265,7 +266,9 @@
           Please drop image file here or click to select (images only)
         </p>
         <div id="dl-dropzone" class="upload-dropzone" tabindex="0" role="button" aria-label="Upload driver's license image">
-          +
+          <div class="drop-icon">+</div>
+          <p id="dl-file-info" class="file-info">No file selected</p>
+          <div id="dl-remove" class="remove-file" style="display: none;">Remove file</div>
         </div>
         <input type="file" id="dl-upload" name="dlUpload" accept="image/*" class="hidden-input" />
       </div>
@@ -276,7 +279,9 @@
           Please drop image or PDF file here or click to select (images or PDFs)
         </p>
         <div id="doc-dropzone" class="upload-dropzone" tabindex="0" role="button" aria-label="Upload additional document">
-          +
+          <div class="drop-icon">+</div>
+          <p id="doc-file-info" class="file-info">No file selected</p>
+          <div id="doc-remove" class="remove-file" style="display: none;">Remove file</div>
         </div>
         <input type="file" id="doc-upload" name="docUpload" accept="image/*,application/pdf" class="hidden-input" />
       </div>
@@ -284,12 +289,8 @@
       <div>
         <label for="marital-status">Marital Status</label>
         <select id="marital-status" name="maritalStatus">
-          <option disabled selected>Select an option</option>
-          <option value="Single">Single</option>
-          <option value="Married">Married</option>
-          <option value="Divorced">Divorced</option>
-          <option value="Widowed">Widowed</option>
-          <option value="Separated">Separated</option>
+          <option disabled selected value="">Select an option</option>
+          <option value="Single">Single</option><option value="Married">Married</option><option value="Divorced">Divorced</option><option value="Widowed">Widowed</option><option value="Separated">Separated</option>
         </select>
       </div>
 
@@ -340,153 +341,167 @@
         <div class="flex-1">
           <label for="state">State</label>
           <select id="state" name="state">
-            <option disabled selected>Select an option</option>
-            <option value="Alabama">Alabama</option>
-            <option value="Alaska">Alaska</option>
-            <option value="Arizona">Arizona</option>
-            <option value="Arkansas">Arkansas</option>
-            <option value="California">California</option>
-            <option value="Colorado">Colorado</option>
-            <option value="Connecticut">Connecticut</option>
-            <option value="Delaware">Delaware</option>
-            <option value="Florida">Florida</option>
-            <option value="Georgia">Georgia</option>
-            <option value="Hawaii">Hawaii</option>
-            <option value="Idaho">Idaho</option>
-            <option value="Illinois">Illinois</option>
-            <option value="Indiana">Indiana</option>
-            <option value="Iowa">Iowa</option>
-            <option value="Kansas">Kansas</option>
-            <option value="Kentucky">Kentucky</option>
-            <option value="Louisiana">Louisiana</option>
-            <option value="Maine">Maine</option>
-            <option value="Maryland">Maryland</option>
-            <option value="Massachusetts">Massachusetts</option>
-            <option value="Michigan">Michigan</option>
-            <option value="Minnesota">Minnesota</option>
-            <option value="Mississippi">Mississippi</option>
-            <option value="Missouri">Missouri</option>
-            <option value="Montana">Montana</option>
-            <option value="Nebraska">Nebraska</option>
-            <option value="Nevada">Nevada</option>
-            <option value="New Hampshire">New Hampshire</option>
-            <option value="New Jersey">New Jersey</option>
-            <option value="New Mexico">New Mexico</option>
-            <option value="New York">New York</option>
-            <option value="North Carolina">North Carolina</option>
-            <option value="North Dakota">North Dakota</option>
-            <option value="Ohio">Ohio</option>
-            <option value="Oklahoma">Oklahoma</option>
-            <option value="Oregon">Oregon</option>
-            <option value="Pennsylvania">Pennsylvania</option>
-            <option value="Rhode Island">Rhode Island</option>
-            <option value="South Carolina">South Carolina</option>
-            <option value="South Dakota">South Dakota</option>
-            <option value="Tennessee">Tennessee</option>
-            <option value="Texas">Texas</option>
-            <option value="Utah">Utah</option>
-            <option value="Vermont">Vermont</option>
-            <option value="Virginia">Virginia</option>
-            <option value="Washington">Washington</option>
-            <option value="West Virginia">West Virginia</option>
-            <option value="Wisconsin">Wisconsin</option>
-            <option value="Wyoming">Wyoming</option>
+            <option disabled selected value="">Select an option</option>
+            <option value="Alabama">Alabama</option><option value="Alaska">Alaska</option><option value="Arizona">Arizona</option><option value="Arkansas">Arkansas</option><option value="California">California</option><option value="Colorado">Colorado</option><option value="Connecticut">Connecticut</option><option value="Delaware">Delaware</option><option value="Florida">Florida</option><option value="Georgia">Georgia</option><option value="Hawaii">Hawaii</option><option value="Idaho">Idaho</option><option value="Illinois">Illinois</option><option value="Indiana">Indiana</option><option value="Iowa">Iowa</option><option value="Kansas">Kansas</option><option value="Kentucky">Kentucky</option><option value="Louisiana">Louisiana</option><option value="Maine">Maine</option><option value="Maryland">Maryland</option><option value="Massachusetts">Massachusetts</option><option value="Michigan">Michigan</option><option value="Minnesota">Minnesota</option><option value="Mississippi">Mississippi</option><option value="Missouri">Missouri</option><option value="Montana">Montana</option><option value="Nebraska">Nebraska</option><option value="Nevada">Nevada</option><option value="New Hampshire">New Hampshire</option><option value="New Jersey">New Jersey</option><option value="New Mexico">New Mexico</option><option value="New York">New York</option><option value="North Carolina">North Carolina</option><option value="North Dakota">North Dakota</option><option value="Ohio">Ohio</option><option value="Oklahoma">Oklahoma</option><option value="Oregon">Oregon</option><option value="Pennsylvania">Pennsylvania</option><option value="Rhode Island">Rhode Island</option><option value="South Carolina">South Carolina</option><option value="South Dakota">South Dakota</option><option value="Tennessee">Tennessee</option><option value="Texas">Texas</option><option value="Utah">Utah</option><option value="Vermont">Vermont</option><option value="Virginia">Virginia</option><option value="Washington">Washington</option><option value="West Virginia">West Virginia</option><option value="Wisconsin">Wisconsin</option><option value="Wyoming">Wyoming</option>
           </select>
         </div>
         <div class="flex-1">
           <label for="zip">Zip</label>
-          <input id="zip" name="zip" type="text" />
+          <input id="zip" name="zip" type="text" placeholder="12345" />
         </div>
       </div>
 
       <div>
-        <button class="btn-submit" type="submit">Submit</button>
+        <button class="btn-submit" id="submit-button" type="submit">Submit</button>
       </div>
       <p class="text-green" id="submit-message">Thank you! Your form has been submitted.</p>
     </form>
   </div>
+  
   <script>
-    const googleSheetURL = 'https://script.google.com/macros/s/AKfycbwi55Y0fu7-80I1ImMlV1lcKjSNEptWgRSBdC7HrgNMkeRxaxai0e7sgrvHXwpmWYLvJQ/exec'; // Update with your actual script ID
+    // ⬇️ *** REPLACE WITH YOUR GOOGLE APPS SCRIPT WEB APP URL *** ⬇️
+    const googleSheetURL = 'https://script.google.com/macros/s/AKfycbyoc3pcqSVNoHWrX9kZmYMLAR-wXlFgBaaqb7TRUR_0VL2eTJphGWxm3Wv0vDK-fCDwOA/exec';
 
     const form = document.getElementById('driver-form');
+    const submitButton = document.getElementById('submit-button');
     const submitMessage = document.getElementById('submit-message');
+
+    // Function to convert a file to a base64 string
+    function toBase64(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = error => reject(error);
+        });
+    }
 
     async function sendEmail(event) {
       event.preventDefault();
 
-      // Basic validation
-      if (!form.email.value.trim()) {
-        alert('Please enter your email.');
-        return false;
-      }
-      if (!form.firstName.value.trim()) {
-        alert('Please enter your first name.');
-        return false;
-      }
-      if (!form.lastName.value.trim()) {
-        alert('Please enter your last name.');
-        return false;
-      }
-      if (!form.phone.value.trim()) {
-        alert('Please enter your phone number.');
-        return false;
+      // Basic validation for required fields
+      const requiredFields = ['firstName', 'lastName', 'email', 'phone'];
+      for (const fieldName of requiredFields) {
+          if (!form[fieldName].value.trim()) {
+              alert(`Please enter your ${fieldName.replace(/([A-Z])/g, ' $1').toLowerCase()}.`);
+              return false;
+          }
       }
 
       submitMessage.style.display = 'none';
+      submitButton.disabled = true;
+      submitButton.textContent = 'Submitting...';
 
-      const formData = new FormData(form);
+      // Get file inputs
+      const dlUploadFile = form.dlUpload.files[0];
+      const docUploadFile = form.docUpload.files[0];
 
       try {
-        const response = await fetch(googleSheetURL, {
-          method: 'POST',
-          body: formData
-        });
+        let dlUploadData = null;
+        let docUploadData = null;
 
-        if (response.ok) {
-          form.reset();
-          submitMessage.style.display = 'block';
-        } else {
-          alert('Form submission failed. Please try again.');
+        // Convert files to base64 if they exist
+        if (dlUploadFile) {
+            dlUploadData = {
+                fileName: dlUploadFile.name,
+                mimeType: dlUploadFile.type,
+                data: (await toBase64(dlUploadFile)).split(',')[1] // remove the data URL prefix
+            };
         }
+        if (docUploadFile) {
+            docUploadData = {
+                fileName: docUploadFile.name,
+                mimeType: docUploadFile.type,
+                data: (await toBase64(docUploadFile)).split(',')[1] // remove the data URL prefix
+            };
+        }
+        
+        // Collect form data into an object
+        const data = {
+          firstName: form.firstName.value.trim(),
+          lastName: form.lastName.value.trim(),
+          email: form.email.value.trim(),
+          phone: form.phone.value.trim(),
+          dlNumber: form.dlNumber.value.trim(),
+          dlState: form.dlState.value,
+          maritalStatus: form.maritalStatus.value,
+          vin: form.vin.value.trim(),
+          householdDrivers: form.householdDrivers.value.trim(),
+          address1: form.address1.value.trim(),
+          address2: form.address2.value.trim(),
+          city: form.city.value.trim(),
+          state: form.state.value,
+          zip: form.zip.value.trim(),
+          country: form.country.value,
+          dlUpload: dlUploadData,
+          docUpload: docUploadData
+        };
+
+        // POST data to Google Apps Script Web App
+        const response = await fetch(googleSheetURL, {
+            method: 'POST',
+            mode: 'cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+
+        if (result.status !== 'success') {
+          throw new Error(result.message || 'Failed to submit to Google Sheets');
+        }
+
+        // Show confirmation message and reset form
+        submitMessage.style.display = 'block';
+        form.reset();
+        // Reset dropzone text
+        document.getElementById('dl-dropzone').querySelector('p').textContent = 'Drop file or click to upload';
+        document.getElementById('doc-dropzone').querySelector('p').textContent = 'Drop file or click to upload';
+
+
       } catch (error) {
-        alert('There was an error submitting the form.');
-        console.error('Error:', error);
+        alert('There was an error submitting the form: ' + error.message);
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = 'Submit';
       }
+      return false; // prevent default form submission
     }
 
-    // Drag and drop for DL upload
-    const dlDropzone = document.getElementById('dl-dropzone');
-    const dlUpload = document.getElementById('dl-upload');
-    dlDropzone.addEventListener('click', () => dlUpload.click());
-    dlDropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      dlDropzone.classList.add('dragover');
-    });
-    dlDropzone.addEventListener('dragleave', () => dlDropzone.classList.remove('dragover'));
-    dlDropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      dlDropzone.classList.remove('dragover');
-      if (e.dataTransfer.files.length > 0) {
-        dlUpload.files = e.dataTransfer.files;
-      }
-    });
+    // Drag-and-drop file upload functionality
+    function setupDropzone(dropzoneId, inputId) {
+      const dropzone = document.getElementById(dropzoneId);
+      const input = document.getElementById(inputId);
+      const dropzoneText = dropzone.querySelector('p');
 
-    // Drag and drop for doc upload
-    const docDropzone = document.getElementById('doc-dropzone');
-    const docUpload = document.getElementById('doc-upload');
-    docDropzone.addEventListener('click', () => docUpload.click());
-    docDropzone.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      docDropzone.classList.add('dragover');
-    });
-    docDropzone.addEventListener('dragleave', () => docDropzone.classList.remove('dragover'));
-    docDropzone.addEventListener('drop', (e) => {
-      e.preventDefault();
-      docDropzone.classList.remove('dragover');
-      if (e.dataTransfer.files.length > 0) {
-        docUpload.files = e.dataTransfer.files;
+      const updateDropzoneText = (files) => {
+        if(files && files.length > 0) {
+            dropzoneText.textContent = files[0].name; // Show the filename
+        } else {
+            dropzoneText.textContent = 'Drop file or click to upload';
+        }
       }
-    });
+      
+      dropzone.addEventListener('click', () => input.click());
+      input.addEventListener('change', () => updateDropzoneText(input.files));
+
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('dragover');
+      });
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('dragover');
+      });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('dragover');
+        input.files = e.dataTransfer.files;
+        updateDropzoneText(input.files);
+      });
+    }
+
+    setupDropzone('dl-dropzone', 'dl-upload');
+    setupDropzone('doc-dropzone', 'doc-upload');
   </script>
 </body>
 </html>
